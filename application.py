@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from BinaryChromosome import GeneticAlgorithm
 from Inversion import InversionOperator
+from Population import Population
 
 
 class Application(tk.Frame):
@@ -52,16 +52,16 @@ class Application(tk.Frame):
             self.entries["number of bits"].get())
         population_size = int(
             self.entries["population amount"].get())
-        geneticAlgorithm = GeneticAlgorithm(population_size,a,b,precision,100)
+        population = Population(population_size,a,b,precision)
         inversion_operator = InversionOperator(inversion_probability)
         print("Do inwersji:")
         for i in range (0,4):
-            print(geneticAlgorithm.population[i].bits)
+            print(population.population[i].bits)
         for i in range (0,population_size):
-            inversion_operator.apply(geneticAlgorithm.population[i].bits)
+            inversion_operator.apply(population.population[i].bits)
         print("Po inwersji:")
         for i in range (0,4):
-            print(geneticAlgorithm.population[i].bits)
+            print(population.population[i].bits)
 
     def clear_placeholder(self, event):
         event.widget.delete(0, "end")
