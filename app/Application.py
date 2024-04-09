@@ -122,7 +122,9 @@ class Application(tk.Frame):
 
         best_individual_x = None
         best_individual_y = float('inf')
-
+        bests = []
+        means = []
+        stds = []
         for _ in range(epochs):
             non_elite_population = Population(population_size - elite_strategy_amount, a, b, precision)
 
@@ -168,9 +170,7 @@ class Application(tk.Frame):
 
 
             elite_strategy = EliteSelection(population, elite_strategy_amount)
-            bests = []
-            means = []
-            stds = []
+
 
             elites = elite_strategy.select_elites()
             population.population[:elite_strategy_amount] = elites
