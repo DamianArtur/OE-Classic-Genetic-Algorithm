@@ -43,10 +43,17 @@ class Application(tk.Frame):
         self.function_combo['values'] =['Styblinski and Tang', 'Rosenbrock’s Function']
         self.function_combo.set('Styblinski and Tang')
         self.function_combo.pack(pady=5)
-
+        self.function_combo.bind("<<ComboboxSelected>>", self.on_function_selected)
+        self.num_variables_label = tk.Label(self, text="Number of variables")
+        self.num_variables_label.pack()
+        self.num_variables_entry = tk.Entry(self)
+        self.num_variables_entry.pack(pady=5)
+        self.num_variables_label.pack_forget()
+        self.num_variables_entry.pack_forget()
         self.input_fields = ["begin of the range", "end of the range", "population amount", "number of bits", "epochs amount",
                              "best and tournament chromosome amount", "elite strategy amount",
                              "cross probability", "mutation probability", "inversion probability"]
+
         self.entries = {}
         self.example_values = ["-10", "10", "100", "20", "100", "20", "5", "0.7", "0.01", "0.01"]
         for field, example_value in zip(self.input_fields, self.example_values):
@@ -55,7 +62,9 @@ class Application(tk.Frame):
             self.entries[field] = tk.Entry(self)
             self.entries[field].insert(0, example_value)
             self.entries[field].pack(pady=5)
-
+        self.entries["Number of variables"] = tk.Entry(self)
+        self.entries["Number of variables"].insert(0, "1")
+        self.entries["Number of variables"].pack(pady=5)
 
         self.selection_method_label = tk.Label(self, text="Choose selection method")
         self.selection_method_label.pack()
@@ -92,13 +101,21 @@ class Application(tk.Frame):
         self.execute_button = tk.Button(self, text="Execute",
                                       command=self.execute)
         self.execute_button.pack(pady=5)
-        
+    def on_function_selected(self, event):
+        selected_function = self.function_combo.get()
+        if selected_function == "Rosenbrock’s Function":
+            self.num_variables_label.pack()
+            self.num_variables_entry.pack()
+        else:
+            self.num_variables_label.pack_forget()
+            self.num_variables_entry.pack_forget()
     def execute(self):
         function = self.function_combo.get()
         if function == 'Styblinski and Tang':
             function = StyblinskiTang()
         elif function == 'Rosenbrock’s Function':
             function = Rosenbrock()
+            num_variables = int(self.entries["Number of variables"].get())
 
         a = float(
             self.entries["begin of the range"].get())
@@ -120,7 +137,10 @@ class Application(tk.Frame):
             self.entries["cross probability"].get())
         inversion_probability = float(
             self.entries["inversion probability"].get())
-        population = Population(population_size, a, b, precision)
+        if function == 'Rosenbrock’s Function':
+            population = Population(population_size, a, b, precision, num_variables)
+        else:
+            population = Population(population_size, a, b, precision)
 
         best_individual_x = None
         if self.maximization_var.get():
