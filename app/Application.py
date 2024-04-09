@@ -127,39 +127,40 @@ class Application(tk.Frame):
         stds = []
         for _ in range(epochs):
             non_elite_population = Population(population_size - elite_strategy_amount, a, b, precision)
+            print(len(non_elite_population.get_population()))
             elite_strategy = EliteSelection(population, elite_strategy_amount, function)
             elites = elite_strategy.select_elites()
             population.population[:elite_strategy_amount] = elites
-            population.population[elite_strategy_amount:] = non_elite_population.population
+
             selection_method = self.selection_method_combo.get()
             if selection_method == 'BEST':
-                selection_strategy = BestSelection(population, function)
+                selection_strategy = BestSelection(non_elite_population, function)
             elif selection_method == 'ROULETTE':
-                selection_strategy = RouletteWheelSelection(population, function)
+                selection_strategy = RouletteWheelSelection(non_elite_population, function)
             elif selection_method == 'TOURNAMENT':
-                selection_strategy = TournamentSelection(population, function, best_and_tournament)
+                selection_strategy = TournamentSelection(non_elite_population, function, best_and_tournament)
 
             crossover_method = self.crossover_method_combo.get()
             crossover_operator = None
             if crossover_method == 'ONE_POINT':
-                crossover_operator = SinglePointCrossover(population.get_population(), crossover_probability)
+                crossover_operator = SinglePointCrossover(non_elite_population.get_population(), crossover_probability)
             elif crossover_method == 'TWO_POINT':
-                crossover_operator = TwoPointCrossover(population.get_population(), crossover_probability)
+                crossover_operator = TwoPointCrossover(non_elite_population.get_population(), crossover_probability)
             elif crossover_method == 'UNIFORM':
-                crossover_operator = UniformCrossover(population.get_population(), crossover_probability)
+                crossover_operator = UniformCrossover(non_elite_population.get_population(), crossover_probability)
             elif crossover_method == 'THREE_POINT':
-                crossover_operator = ThreePointCrossover(population.get_population(), crossover_probability)
+                crossover_operator = ThreePointCrossover(non_elite_population.get_population(), crossover_probability)
             elif crossover_method == 'GRANULAR':
-                crossover_operator = GranularCrossover(population.get_population(), crossover_probability)
+                crossover_operator = GranularCrossover(non_elite_population.get_population(), crossover_probability)
 
             mutation_method = self.mutation_method_combo.get()
             mutation_operator = None
             if mutation_method == 'EDGE_MUTATION':
-                mutation_operator = EdgeMutation(population.get_population(), mutation_probability)
+                mutation_operator = EdgeMutation(non_elite_population.get_population(), mutation_probability)
             elif mutation_method == 'TWO_POINT_MUTATION':
-                mutation_operator = TwoPointMutation(population.get_population(), mutation_probability)
+                mutation_operator = TwoPointMutation(non_elite_population.get_population(), mutation_probability)
             elif mutation_method == 'SINGLE_POINT_MUTATION':
-                mutation_operator = SinglePointMutation(population.get_population(), mutation_probability)
+                mutation_operator = SinglePointMutation(non_elite_population.get_population(), mutation_probability)
 
             inversion_operator = InversionOperator(inversion_probability)
             # print("Do inwersji:")
@@ -170,7 +171,10 @@ class Application(tk.Frame):
             # print("Po inwersji:")
             # for i in range (0,4):
             #     print(population.population[i].bits)
-
+            selection_strategy.select()
+            crossover_operator.crossover()
+            mutation_operator.mutate()
+            population.population[elite_strategy_amount:] = non_elite_population.population
 
             values = [function.compute(individual) for individual in population.get_population_value()]
             print(np.min(values))
@@ -185,9 +189,6 @@ class Application(tk.Frame):
             means.append(np.mean(values))
             stds.append(np.std(values))
 
-            selection_strategy.select()
-            crossover_operator.crossover()
-            mutation_operator.mutate()
 
 
 
