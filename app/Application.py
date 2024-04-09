@@ -1,3 +1,4 @@
+import csv
 import os
 import time
 
@@ -126,8 +127,10 @@ class Application(tk.Frame):
         bests = []
         means = []
         stds = []
+        epoch_bit_real_value_data = []
         start_time = time.time()
-        for _ in range(epochs):
+
+        for epoch in range(epochs):
             non_elite_population = Population(population_size - elite_strategy_amount, a, b, precision)
             print(len(non_elite_population.get_population()))
             elite_strategy = EliteSelection(population, elite_strategy_amount, function)
@@ -199,7 +202,14 @@ class Application(tk.Frame):
 
         if not os.path.exists('output'):
             os.makedirs('output')
-
+        output_file = 'output/values.csv'
+        with open(output_file, 'a', newline='') as csvfile:
+            fieldnames = ['Epoch', 'Best', 'Mean', 'Std']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            if csvfile.tell() == 0:
+                writer.writeheader()
+            for epoch in range(epochs):
+                writer.writerow({'Epoch': epoch + 1, 'Best': bests[epoch], 'Mean': means[epoch], 'Std': stds[epoch]})
         plt.plot(bests)
         plt.savefig('output/bests.png')
         plt.clf()
