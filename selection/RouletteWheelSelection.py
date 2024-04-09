@@ -4,12 +4,11 @@ from selection.Selection import Selection
 
 class RouletteWheelSelection(Selection):
 
-    def __init__(self, population):
-        super().__init__(population)
-
     def select(self):
-        min_fitness = min(individual for individual in self.population.get_population_y())
-        adjusted_population = [individual - min_fitness for individual in self.population.get_population_y()]
+        
+        fitness = [self.function.compute(individual) for individual in self.population.get_population_value()]
+        min_fitness = min(fitness)
+        adjusted_population = [individual - min_fitness for individual in fitness]
         
         if self.minimization:
             adjusted_population = [1/fitness for fitness in adjusted_population]
@@ -17,15 +16,16 @@ class RouletteWheelSelection(Selection):
         total_fitness = sum(adjusted_population)
         
         selected_individuals = []
-        for _ in range(len(self.population.get_population_y())):
+        pop = self.population.get_population()
+        for _ in range(len(pop)):
         
             pick = random.uniform(0, total_fitness)
             
             current = 0
-            for index, individual in enumerate(self.population.get_population_y()):
+            for index, individual in enumerate(fitness):
                 current += adjusted_population[index]
                 if current > pick:
-                    selected_individuals.append(individual)
+                    selected_individuals.append(pop[index])
                     break
 
         return selected_individuals
