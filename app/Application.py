@@ -1,4 +1,5 @@
 import os
+import time
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -125,6 +126,7 @@ class Application(tk.Frame):
         bests = []
         means = []
         stds = []
+        start_time = time.time()
         for _ in range(epochs):
             non_elite_population = Population(population_size - elite_strategy_amount, a, b, precision)
             print(len(non_elite_population.get_population()))
@@ -188,8 +190,8 @@ class Application(tk.Frame):
             bests.append(np.min(values))
             means.append(np.mean(values))
             stds.append(np.std(values))
-
-
+        end_time = time.time()
+        execution_time = end_time - start_time
 
 
 
@@ -212,7 +214,7 @@ class Application(tk.Frame):
 
         plt.close('all')
 
-        tk.messagebox.showinfo('Wynik', f'f({best_individual_x}) = {best_individual_y}')
+        tk.messagebox.showinfo('Wynik', f'f({best_individual_x}) = {best_individual_y}'f'\nCzas wykonanie = {execution_time}')
 
     def clear_placeholder(self, event):
         event.widget.delete(0, "end")
