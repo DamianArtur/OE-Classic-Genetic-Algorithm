@@ -123,7 +123,11 @@ class Application(tk.Frame):
         population = Population(population_size, a, b, precision)
 
         best_individual_x = None
-        best_individual_y = float('inf')
+        if self.maximization_var.get():
+            best_individual_y = float('-inf')
+        else:
+            best_individual_y = float('inf')
+
         bests = []
         means = []
         stds = []
@@ -132,8 +136,7 @@ class Application(tk.Frame):
 
         for epoch in range(epochs):
             non_elite_population = Population(population_size - elite_strategy_amount, a, b, precision)
-            print(len(non_elite_population.get_population()))
-            elite_strategy = EliteSelection(population, elite_strategy_amount, function)
+            elite_strategy = EliteSelection(population, elite_strategy_amount, function,self.maximization_var.get())
             elites = elite_strategy.select_elites()
             population.population[:elite_strategy_amount] = elites
 
@@ -183,16 +186,28 @@ class Application(tk.Frame):
 
             values = [function.compute(individual) for individual in population.get_population_value()]
             print(np.min(values))
-            current_best_y = np.min(values)
 
-            if current_best_y < best_individual_y:
-                best_individual_y = current_best_y
-                best_individaul_index = values.index(current_best_y)
-                best_individual_x = population.get_population_value()[best_individaul_index]
+            if self.maximization_var.get():
+                current_best_y = np.max(values)
+                if current_best_y > best_individual_y:
+                    best_individual_y = current_best_y
+                    best_individaul_index = values.index(current_best_y)
+                    best_individual_x = population.get_population_value()[best_individaul_index]
+                bests.append(np.max(values))
+                means.append(np.mean(values))
+                stds.append(np.std(values))
 
-            bests.append(np.min(values))
-            means.append(np.mean(values))
-            stds.append(np.std(values))
+
+            else:
+                current_best_y = np.min(values)
+                if current_best_y < best_individual_y:
+                    best_individual_y = current_best_y
+                    best_individaul_index = values.index(current_best_y)
+                    best_individual_x = population.get_population_value()[best_individaul_index]
+                bests.append(np.min(values))
+                means.append(np.mean(values))
+                stds.append(np.std(values))
+
         end_time = time.time()
         execution_time = end_time - start_time
 

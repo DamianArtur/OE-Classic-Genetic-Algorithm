@@ -1,11 +1,16 @@
 class EliteSelection:
-    def __init__(self, population, elite_strategy_amount, function):
+    def __init__(self, population, elite_strategy_amount, function,maximization):
         self.population = population
         self.elite_strategy_amount = elite_strategy_amount
         self.function = function
-
+        self.maximization = maximization
     def select_elites(self):
-        sorted_population = sorted(self.population.get_population(), key=lambda x: self.function.compute(x.get_real_value()))
+        if self.maximization:
+            sorted_population = sorted(self.population.get_population(),
+                                       key=lambda x: self.function.compute(x.get_real_value()),reverse=True)
+        else:
+            sorted_population = sorted(self.population.get_population(),
+                                       key=lambda x: self.function.compute(x.get_real_value()))
 
         elites = sorted_population[:self.elite_strategy_amount]
 
