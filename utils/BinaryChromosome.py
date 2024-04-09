@@ -1,5 +1,7 @@
-import random
 import math
+import random
+
+
 class BinaryChromosome:
     def __init__(self, a, b, precision):
         self.a = a

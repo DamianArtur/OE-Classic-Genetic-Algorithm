@@ -38,17 +38,18 @@ class Application(tk.Frame):
 
         self.function_label = tk.Label(self, text="Choose funcion")
         self.function_label.pack()
-        
+
         self.function_combo = ttk.Combobox(self, width=30)
-        self.function_combo['values'] =['Styblinski and Tang', 'Rosenbrock’s Function']
+        self.function_combo['values'] = ['Styblinski and Tang', 'Rosenbrock’s Function']
         self.function_combo.set('Styblinski and Tang')
         self.function_combo.pack(pady=5)
-
-        self.input_fields = ["begin of the range", "end of the range", "population amount", "number of bits", "epochs amount",
+        self.input_fields = ["number of variables","begin of the range", "end of the range", "population amount", "number of bits",
+                             "epochs amount",
                              "best and tournament chromosome amount", "elite strategy amount",
                              "cross probability", "mutation probability", "inversion probability"]
+
         self.entries = {}
-        self.example_values = ["-10", "10", "100", "20", "100", "20", "5", "0.7", "0.01", "0.01"]
+        self.example_values = ["1","-10", "10", "100", "20", "100", "20", "5", "0.7", "0.01", "0.01"]
         for field, example_value in zip(self.input_fields, self.example_values):
             label = tk.Label(self, text=field)
             label.pack()
@@ -65,10 +66,8 @@ class Application(tk.Frame):
         self.selection_method_combo.set('BEST')
         self.selection_method_combo.pack(pady=5)
 
-
         self.crossover_method_label = tk.Label(self, text="Choose crossover method")
         self.crossover_method_label.pack()
-
 
         self.crossover_method_combo = ttk.Combobox(self, width=30)
         self.crossover_method_combo['values'] = ['ONE_POINT', 'TWO_POINT', 'UNIFORM', 'THREE_POINT', 'GRANULAR']
@@ -90,16 +89,19 @@ class Application(tk.Frame):
         self.max_min_checkbutton.pack(pady=5)
 
         self.execute_button = tk.Button(self, text="Execute",
-                                      command=self.execute)
+                                        command=self.execute)
         self.execute_button.pack(pady=5)
-        
+
+
+
     def execute(self):
         function = self.function_combo.get()
         if function == 'Styblinski and Tang':
             function = StyblinskiTang()
+            num_variables = 1
         elif function == 'Rosenbrock’s Function':
             function = Rosenbrock()
-
+            num_variables = int(self.entries["number of variables"].get())
         a = float(
             self.entries["begin of the range"].get())
         b = float(
@@ -120,7 +122,7 @@ class Application(tk.Frame):
             self.entries["cross probability"].get())
         inversion_probability = float(
             self.entries["inversion probability"].get())
-        population = Population(population_size, a, b, precision)
+        population = Population(population_size, num_variables, a, b, precision)
 
         best_individual_x = None
         if self.maximization_var.get():
@@ -135,7 +137,7 @@ class Application(tk.Frame):
         start_time = time.time()
 
         for epoch in range(epochs):
-            non_elite_population = Population(population_size - elite_strategy_amount, a, b, precision)
+            non_elite_population = Population(population_size - elite_strategy_amount, num_variables, a, b, precision)
             elite_strategy = EliteSelection(population, elite_strategy_amount, function,self.maximization_var.get())
             elites = elite_strategy.select_elites()
             population.population[:elite_strategy_amount] = elites
@@ -151,7 +153,10 @@ class Application(tk.Frame):
             crossover_method = self.crossover_method_combo.get()
             crossover_operator = None
             if crossover_method == 'ONE_POINT':
-                crossover_operator = SinglePointCrossover(non_elite_population.get_population(), crossover_probability)
+                for chromosome in non_elite_population.get_population():
+                    crossover_operator = SinglePointCrossover(chromosome,
+                                                              crossover_probability)
+
             elif crossover_method == 'TWO_POINT':
                 crossover_operator = TwoPointCrossover(non_elite_population.get_population(), crossover_probability)
             elif crossover_method == 'UNIFORM':
@@ -164,7 +169,9 @@ class Application(tk.Frame):
             mutation_method = self.mutation_method_combo.get()
             mutation_operator = None
             if mutation_method == 'EDGE_MUTATION':
-                mutation_operator = EdgeMutation(non_elite_population.get_population(), mutation_probability)
+                for chromosome in non_elite_population.get_population():
+                    mutation_operator = EdgeMutation(chromosome, mutation_probability)
+
             elif mutation_method == 'TWO_POINT_MUTATION':
                 mutation_operator = TwoPointMutation(non_elite_population.get_population(), mutation_probability)
             elif mutation_method == 'SINGLE_POINT_MUTATION':
@@ -184,26 +191,26 @@ class Application(tk.Frame):
             mutation_operator.mutate()
             population.population[elite_strategy_amount:] = non_elite_population.population
 
-            values = [function.compute(individual) for individual in population.get_population_value()]
+            values = [function.compute(individual) for individual in population.get_population()]
             print(np.min(values))
 
             if self.maximization_var.get():
                 current_best_y = np.max(values)
                 if current_best_y > best_individual_y:
                     best_individual_y = current_best_y
-                    best_individaul_index = values.index(current_best_y)
-                    best_individual_x = population.get_population_value()[best_individaul_index]
+                    best_individual_index = values.index(current_best_y)
+                    best_individual_values = population.get_individual_value(best_individual_index)
+                    best_individual_x = population.get_individual(best_individual_index)
                 bests.append(np.max(values))
                 means.append(np.mean(values))
                 stds.append(np.std(values))
-
-
             else:
                 current_best_y = np.min(values)
                 if current_best_y < best_individual_y:
                     best_individual_y = current_best_y
-                    best_individaul_index = values.index(current_best_y)
-                    best_individual_x = population.get_population_value()[best_individaul_index]
+                    best_individual_index = values.index(current_best_y)
+                    best_individual_values = population.get_individual_value(best_individual_index)
+                    best_individual_x = population.get_individual(best_individual_index)
                 bests.append(np.min(values))
                 means.append(np.mean(values))
                 stds.append(np.std(values))
@@ -239,7 +246,7 @@ class Application(tk.Frame):
 
         plt.close('all')
 
-        tk.messagebox.showinfo('Wynik', f'f({best_individual_x}) = {best_individual_y}'f'\nCzas wykonanie = {execution_time}')
+        tk.messagebox.showinfo('Wynik', f'f({best_individual_values}) = {best_individual_y}' f'\nCzas wykonanie = {execution_time}')
 
     def clear_placeholder(self, event):
         event.widget.delete(0, "end")
