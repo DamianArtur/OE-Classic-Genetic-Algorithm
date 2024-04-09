@@ -160,12 +160,21 @@ class Application(tk.Frame):
         # for i in range (0,4):
         #     print(population.population[i].bits)
 
+        best_individual_x = None
+        best_individual_y = float('inf')
+
         bests = []
         means = []
         stds = []
 
         for _ in range(epochs):
             values = [function.compute(individual) for individual in population.get_population_value()]
+
+            current_best_y = np.min(values)
+            if current_best_y < best_individual_y:
+                best_individual_y = current_best_y
+                best_individaul_index = values.index(current_best_y)
+                best_individual_x = population.get_population_value()[best_individaul_index]
 
             bests.append(np.min(values))
             means.append(np.mean(values))
@@ -176,6 +185,12 @@ class Application(tk.Frame):
             mutation_operator.mutate()  
 
         values = [function.compute(individual) for individual in population.get_population_value()]
+
+        current_best_y = np.min(values)
+        if current_best_y < best_individual_y:
+            best_individual_y = current_best_y
+            best_individaul_index = values.index(current_best_y)
+            best_individual_x = population.get_population_value()[best_individaul_index]
 
         bests.append(np.min(values))
         means.append(np.mean(values))
@@ -197,6 +212,8 @@ class Application(tk.Frame):
         plt.clf()
 
         plt.close('all')
+
+        tk.messagebox.showinfo('Wynik', f'f({best_individual_x}) = {best_individual_y}')
 
     def clear_placeholder(self, event):
         event.widget.delete(0, "end")
