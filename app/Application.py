@@ -5,10 +5,11 @@ from matplotlib import pyplot as plt
 
 import tkinter as tk
 from tkinter import ttk
-
+from tkinter import messagebox
 from selection.BestSelection import BestSelection
 from mutation.EdgeMutation import EdgeMutation
 from crossover.GranularCrossover import GranularCrossover
+from utils.EliteStrategy import EliteSelection
 from utils.Inversion import InversionOperator
 from utils.Population import Population
 from selection.RouletteWheelSelection import RouletteWheelSelection
@@ -117,80 +118,82 @@ class Application(tk.Frame):
             self.entries["cross probability"].get())
         inversion_probability = float(
             self.entries["inversion probability"].get())
-
-        population = Population(population_size,a,b,precision)
-
-        selection_method = self.selection_method_combo.get()
-        if selection_method == 'BEST':
-            selection_strategy = BestSelection(population, function)
-        elif selection_method == 'ROULETTE':
-            selection_strategy = RouletteWheelSelection(population, function)
-        elif selection_method == 'TOURNAMENT':
-            selection_strategy = TournamentSelection(population, function, best_and_tournament)
-
-        crossover_method = self.crossover_method_combo.get()
-        crossover_operator = None
-        if crossover_method == 'ONE_POINT':
-            crossover_operator = SinglePointCrossover(population.get_population(), crossover_probability)
-        elif crossover_method == 'TWO_POINT':
-            crossover_operator = TwoPointCrossover(population.get_population(), crossover_probability)
-        elif crossover_method == 'UNIFORM':
-            crossover_operator = UniformCrossover(population.get_population(), crossover_probability)
-        elif crossover_method == 'THREE_POINT':
-            crossover_operator = ThreePointCrossover(population.get_population(), crossover_probability)
-        elif crossover_method == 'GRANULAR':
-            crossover_operator = GranularCrossover(population.get_population(), crossover_probability)
-
-        mutation_method = self.mutation_method_combo.get()
-        mutation_operator = None
-        if mutation_method == 'EDGE_MUTATION':
-            mutation_operator = EdgeMutation(population.get_population(), mutation_probability)
-        elif mutation_method == 'TWO_POINT_MUTATION':
-            mutation_operator = TwoPointMutation(population.get_population(), mutation_probability)
-        elif mutation_method == 'SINGLE_POINT_MUTATION':
-            mutation_operator = SinglePointMutation(population.get_population(), mutation_probability)
-
-        inversion_operator = InversionOperator(inversion_probability)
-        # print("Do inwersji:")
-        # for i in range (0,4):
-        #     print(population.population[i].bits)
-        # for i in range (0,population_size):
-        #     inversion_operator.apply(population.population[i].bits)
-        # print("Po inwersji:")
-        # for i in range (0,4):
-        #     print(population.population[i].bits)
+        population = Population(population_size, a, b, precision)
 
         best_individual_x = None
         best_individual_y = float('inf')
 
-        bests = []
-        means = []
-        stds = []
-
         for _ in range(epochs):
-            values = [function.compute(individual) for individual in population.get_population_value()]
+            non_elite_population = Population(population_size - elite_strategy_amount, a, b, precision)
 
+            selection_method = self.selection_method_combo.get()
+            if selection_method == 'BEST':
+                selection_strategy = BestSelection(population, function)
+            elif selection_method == 'ROULETTE':
+                selection_strategy = RouletteWheelSelection(population, function)
+            elif selection_method == 'TOURNAMENT':
+                selection_strategy = TournamentSelection(population, function, best_and_tournament)
+
+            crossover_method = self.crossover_method_combo.get()
+            crossover_operator = None
+            if crossover_method == 'ONE_POINT':
+                crossover_operator = SinglePointCrossover(population.get_population(), crossover_probability)
+            elif crossover_method == 'TWO_POINT':
+                crossover_operator = TwoPointCrossover(population.get_population(), crossover_probability)
+            elif crossover_method == 'UNIFORM':
+                crossover_operator = UniformCrossover(population.get_population(), crossover_probability)
+            elif crossover_method == 'THREE_POINT':
+                crossover_operator = ThreePointCrossover(population.get_population(), crossover_probability)
+            elif crossover_method == 'GRANULAR':
+                crossover_operator = GranularCrossover(population.get_population(), crossover_probability)
+
+            mutation_method = self.mutation_method_combo.get()
+            mutation_operator = None
+            if mutation_method == 'EDGE_MUTATION':
+                mutation_operator = EdgeMutation(population.get_population(), mutation_probability)
+            elif mutation_method == 'TWO_POINT_MUTATION':
+                mutation_operator = TwoPointMutation(population.get_population(), mutation_probability)
+            elif mutation_method == 'SINGLE_POINT_MUTATION':
+                mutation_operator = SinglePointMutation(population.get_population(), mutation_probability)
+
+            inversion_operator = InversionOperator(inversion_probability)
+            # print("Do inwersji:")
+            # for i in range (0,4):
+            #     print(population.population[i].bits)
+            # for i in range (0,population_size):
+            #     inversion_operator.apply(population.population[i].bits)
+            # print("Po inwersji:")
+            # for i in range (0,4):
+            #     print(population.population[i].bits)
+
+
+            elite_strategy = EliteSelection(population, elite_strategy_amount)
+            bests = []
+            means = []
+            stds = []
+
+            elites = elite_strategy.select_elites()
+            population.population[:elite_strategy_amount] = elites
+            population.population[elite_strategy_amount:] = non_elite_population.population
+            values = [function.compute(individual) for individual in population.get_population_value()]
             current_best_y = np.min(values)
+
             if current_best_y < best_individual_y:
                 best_individual_y = current_best_y
                 best_individaul_index = values.index(current_best_y)
                 best_individual_x = population.get_population_value()[best_individaul_index]
 
             bests.append(np.min(values))
+            print(np.min(values))
             means.append(np.mean(values))
             stds.append(np.std(values))
 
             selection_strategy.select()
             crossover_operator.crossover()
-            mutation_operator.mutate()  
+            mutation_operator.mutate()
 
-        values = [function.compute(individual) for individual in population.get_population_value()]
 
-        current_best_y = np.min(values)
-        if current_best_y < best_individual_y:
-            best_individual_y = current_best_y
-            best_individaul_index = values.index(current_best_y)
-            best_individual_x = population.get_population_value()[best_individaul_index]
+
 
         bests.append(np.min(values))
         means.append(np.mean(values))
