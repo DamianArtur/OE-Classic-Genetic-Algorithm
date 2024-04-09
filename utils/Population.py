@@ -11,5 +11,5 @@ class Population:
     def get_population(self):
         return self.population
 
-    def get_population_values(self):
+    def get_population_value(self):
         return [chromosome.get_real_value() for chromosome in self.population]

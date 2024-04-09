@@ -45,7 +45,7 @@ class Application(tk.Frame):
                              "best and tournament chromosome amount", "elite strategy amount",
                              "cross probability", "mutation probability", "inversion probability"]
         self.entries = {}
-        self.example_values = ["0", "10", "100", "10", "1000", "20", "5", "0.7", "0.01", "0.01"]
+        self.example_values = ["-10", "10", "100", "20", "100", "20", "5", "0.7", "0.01", "0.01"]
         for field, example_value in zip(self.input_fields, self.example_values):
             label = tk.Label(self, text=field)
             label.pack()
@@ -97,9 +97,9 @@ class Application(tk.Frame):
         elif function == 'Rosenbrock’s Function':
             function = Rosenbrock()
 
-        a = int(
+        a = float(
             self.entries["begin of the range"].get())
-        b = int(
+        b = float(
             self.entries["end of the range"].get())
         precision = int(
             self.entries["number of bits"].get())
@@ -122,11 +122,11 @@ class Application(tk.Frame):
 
         selection_method = self.selection_method_combo.get()
         if selection_method == 'BEST':
-            selection_strategy = BestSelection(population)
+            selection_strategy = BestSelection(population, function)
         elif selection_method == 'ROULETTE':
-            selection_strategy = RouletteWheelSelection(population)
+            selection_strategy = RouletteWheelSelection(population, function)
         elif selection_method == 'TOURNAMENT':
-            selection_strategy = TournamentSelection(population, best_and_tournament)
+            selection_strategy = TournamentSelection(population, function, best_and_tournament)
 
         crossover_method = self.crossover_method_combo.get()
         crossover_operator = None
@@ -164,8 +164,8 @@ class Application(tk.Frame):
         means = []
         stds = []
 
-        for epoch in range(epochs):
-            values = population.get_population_values()
+        for _ in range(epochs):
+            values = [function.compute(individual) for individual in population.get_population_value()]
 
             bests.append(np.min(values))
             means.append(np.mean(values))
@@ -175,7 +175,7 @@ class Application(tk.Frame):
             crossover_operator.crossover()
             mutation_operator.mutate()  
 
-        values = population.get_population_values()
+        values = [function.compute(individual) for individual in population.get_population_value()]
 
         bests.append(np.min(values))
         means.append(np.mean(values))
