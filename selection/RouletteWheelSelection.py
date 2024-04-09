@@ -8,8 +8,8 @@ class RouletteWheelSelection(Selection):
         super().__init__(population)
 
     def select(self):
-        min_fitness = min(individual.fitness for individual in self.population.get_population_values())
-        adjusted_population = [individual.fitness - min_fitness for individual in self.population.get_population_values()]
+        min_fitness = min(individual for individual in self.population.get_population_values())
+        adjusted_population = [individual - min_fitness for individual in self.population.get_population_values()]
         
         if self.minimization:
             adjusted_population = [1/fitness for fitness in adjusted_population]

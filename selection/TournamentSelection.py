@@ -11,8 +11,8 @@ class TournamentSelection(Selection):
     def select(self):
         selected_individuals = []
 
-        for _ in range(len(self.population)):
-            tournament = random.sample(self.population, self.tournament_size)
+        for _ in range(len(self.population.get_population())):
+            tournament = random.sample(self.population.get_population_values(), self.tournament_size)
             
             if self.minimization:
                 best_individual = min(tournament)
