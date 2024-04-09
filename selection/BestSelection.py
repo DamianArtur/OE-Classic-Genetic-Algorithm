@@ -1,4 +1,4 @@
-from Selection import Selection 
+from selection.Selection import Selection 
 
 class BestSelection(Selection):
 

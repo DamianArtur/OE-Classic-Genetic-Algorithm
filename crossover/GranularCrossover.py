@@ -1,6 +1,6 @@
 import random
 
-from Crossover import Crossover
+from crossover.Crossover import Crossover
 
 class GranularCrossover(Crossover):
 

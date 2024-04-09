@@ -1,25 +1,27 @@
+import os
+
 import numpy as np
 from matplotlib import pyplot as plt
 
 import tkinter as tk
 from tkinter import ttk
 
-from BestSelection import BestSelection
-from EdgeMutation import EdgeMutation
-from GranularCrossover import GranularCrossover
-from Inversion import InversionOperator
-from Population import Population
-from RouletteWheelSelection import RouletteWheelSelection
-from SinglePointCrossover import SinglePointCrossover
-from SinglePointMutation import SinglePointMutation
-from ThreePointCrossover import ThreePointCrossover
-from TournamentSelection import TournamentSelection
-from TwoPointCrossover import TwoPointCrossover
-from TwoPointMutation import TwoPointMutation
-from UniformCrossover import UniformCrossover
+from selection.BestSelection import BestSelection
+from mutation.EdgeMutation import EdgeMutation
+from crossover.GranularCrossover import GranularCrossover
+from utils.Inversion import InversionOperator
+from utils.Population import Population
+from selection.RouletteWheelSelection import RouletteWheelSelection
+from crossover.SinglePointCrossover import SinglePointCrossover
+from mutation.SinglePointMutation import SinglePointMutation
+from crossover.ThreePointCrossover import ThreePointCrossover
+from selection.TournamentSelection import TournamentSelection
+from crossover.TwoPointCrossover import TwoPointCrossover
+from mutation.TwoPointMutation import TwoPointMutation
+from crossover.UniformCrossover import UniformCrossover
 
-from StyblinskiTang import StyblinskiTang
-from Rosenbrock import Rosenbrock
+from functions.StyblinskiTang import StyblinskiTang
+from functions.Rosenbrock import Rosenbrock
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -177,17 +179,22 @@ class Application(tk.Frame):
         means.append(np.mean(values))
         stds.append(np.std(values))
 
+        if not os.path.exists('output'):
+            os.makedirs('output')
+
         plt.plot(bests)
-        plt.savefig('bests.png')
+        plt.savefig('output/bests.png')
         plt.clf()
-        
+
         plt.plot(means)
-        plt.savefig('means.png')
+        plt.savefig('output/means.png')
         plt.clf()
 
         plt.plot(stds)
-        plt.savefig('stds.png')
+        plt.savefig('output/stds.png')
         plt.clf()
+
+        plt.close('all')
 
     def clear_placeholder(self, event):
         event.widget.delete(0, "end")

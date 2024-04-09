@@ -1,6 +1,6 @@
 import random
 
-from Selection import Selection
+from selection.Selection import Selection
 
 class RouletteWheelSelection(Selection):
 

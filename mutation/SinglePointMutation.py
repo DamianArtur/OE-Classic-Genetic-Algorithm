@@ -1,6 +1,6 @@
 import random
 
-from Mutation import Mutation
+from mutation.Mutation import Mutation
 
 class SinglePointMutation(Mutation):
 

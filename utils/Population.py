@@ -1,4 +1,5 @@
-from BinaryChromosome import BinaryChromosome
+from utils.BinaryChromosome import BinaryChromosome
+
 class Population:
     def __init__(self, population_size, a, b, precision):
         self.population_size = population_size
