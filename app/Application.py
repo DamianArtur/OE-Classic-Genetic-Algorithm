@@ -176,22 +176,26 @@ class Application(tk.Frame):
             elif mutation_method == 'SINGLE_POINT_MUTATION':
                 mutation_operator = SinglePointMutation(non_elite_population.get_population(), mutation_probability)
 
-            inversion_operator = InversionOperator(inversion_probability)
-            # print("Do inwersji:")
-            # for i in range (0,4):
-            #     print(population.population[i].bits)
-            # for i in range (0,population_size):
-            #     inversion_operator.apply(population.population[i].bits)
-            # print("Po inwersji:")
-            # for i in range (0,4):
-            #     print(population.population[i].bits)
             selection_strategy.select()
             crossover_operator.crossover()
             mutation_operator.mutate()
+            # print("Do inwersji")
+            # for chromosome in population.get_population():
+            #     for chromosome in chromosome:
+            #         print(chromosome.bits)
+
+            for chromosomes in population.get_population():
+                for chromosome in chromosomes:
+                    inversion_operator = InversionOperator(inversion_probability, chromosome)
+                    inversion_operator.apply()
+
+            # print("Po inwersji")
+            # for chromosome in population.get_population():
+            #     for chromosome in chromosome:
+            #         print(chromosome.bits)
             population.population[elite_strategy_amount:] = non_elite_population.population
 
             values = [function.compute(individual) for individual in population.get_population()]
-            print(np.min(values))
 
             if self.maximization_var.get():
                 current_best_y = np.max(values)
