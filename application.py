@@ -71,10 +71,11 @@ class Application(tk.Frame):
         self.max_min_checkbutton = tk.Checkbutton(self, text="Maximization", variable=self.maximization_var)
         self.max_min_checkbutton.pack(pady=5)
 
-        self.apply_button = tk.Button(self, text="Apply Inversion Probability",
-                                      command=self.apply_inversion_probability)
-        self.apply_button.pack(pady=5)
-    def apply_inversion_probability(self):
+        self.execute_button = tk.Button(self, text="Execute",
+                                      command=self.execute)
+        self.execute_button.pack(pady=5)
+        
+    def execute(self):
         a = int(
             self.entries["begin of the range"].get())
         b = int(
