@@ -15,6 +15,8 @@ from TwoPointCrossover import TwoPointCrossover
 from TwoPointMutation import TwoPointMutation
 from UniformCrossover import UniformCrossover
 
+from StyblinskiTang import StyblinskiTang
+from Rosenbrock import Rosenbrock
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -76,6 +78,12 @@ class Application(tk.Frame):
         self.execute_button.pack(pady=5)
         
     def execute(self):
+        function = self.function_combo.get()
+        if function == 'Styblinski and Tang':
+            function = StyblinskiTang()
+        elif function == 'Rosenbrock’s Function':
+            function = Rosenbrock()
+
         a = int(
             self.entries["begin of the range"].get())
         b = int(
