@@ -98,10 +98,9 @@ class Application(tk.Frame):
         function = self.function_combo.get()
         if function == 'Styblinski and Tang':
             function = StyblinskiTang()
-            num_variables = 1
         elif function == 'Rosenbrock’s Function':
             function = Rosenbrock()
-            num_variables = int(self.entries["number of variables"].get())
+        num_variables = int(self.entries["number of variables"].get())
         a = float(
             self.entries["begin of the range"].get())
         b = float(
