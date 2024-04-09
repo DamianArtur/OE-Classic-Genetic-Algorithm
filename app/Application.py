@@ -167,15 +167,13 @@ class Application(tk.Frame):
             # print("Po inwersji:")
             # for i in range (0,4):
             #     print(population.population[i].bits)
-
-
-            elite_strategy = EliteSelection(population, elite_strategy_amount)
-
-
+            elite_strategy = EliteSelection(population, elite_strategy_amount,function)
             elites = elite_strategy.select_elites()
             population.population[:elite_strategy_amount] = elites
             population.population[elite_strategy_amount:] = non_elite_population.population
+
             values = [function.compute(individual) for individual in population.get_population_value()]
+            print(values)
             current_best_y = np.min(values)
 
             if current_best_y < best_individual_y:
@@ -184,7 +182,6 @@ class Application(tk.Frame):
                 best_individual_x = population.get_population_value()[best_individaul_index]
 
             bests.append(np.min(values))
-            print(np.min(values))
             means.append(np.mean(values))
             stds.append(np.std(values))
 
@@ -195,9 +192,7 @@ class Application(tk.Frame):
 
 
 
-        bests.append(np.min(values))
-        means.append(np.mean(values))
-        stds.append(np.std(values))
+
 
         if not os.path.exists('output'):
             os.makedirs('output')
