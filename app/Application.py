@@ -27,8 +27,10 @@ class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
+        self.master.title("Projekt 2")
         self.pack(padx=10, pady=10)
         self.create_widgets()
+
     def create_widgets(self):
 
         self.function_label = tk.Label(self, text="Choose funcion")

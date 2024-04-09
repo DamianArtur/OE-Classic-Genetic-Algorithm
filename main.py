@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from app.application import Application
+from app.Application import Application
 
 def on_close():
     root.destroy()
