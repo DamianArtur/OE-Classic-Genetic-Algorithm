@@ -157,13 +157,24 @@ class Application(tk.Frame):
                                                               crossover_probability)
 
             elif crossover_method == 'TWO_POINT':
-                crossover_operator = TwoPointCrossover(non_elite_population.get_population(), crossover_probability)
+                for chromosome in non_elite_population.get_population():
+                    crossover_operator = TwoPointCrossover(chromosome,
+                                                              crossover_probability)
+                    
             elif crossover_method == 'UNIFORM':
-                crossover_operator = UniformCrossover(non_elite_population.get_population(), crossover_probability)
+                for chromosome in non_elite_population.get_population():
+                    crossover_operator = UniformCrossover(chromosome,
+                                                crossover_probability)
+                    
             elif crossover_method == 'THREE_POINT':
-                crossover_operator = ThreePointCrossover(non_elite_population.get_population(), crossover_probability)
+                for chromosome in non_elite_population.get_population():
+                    crossover_operator = ThreePointCrossover(chromosome,
+                                                crossover_probability)
+                    
             elif crossover_method == 'GRANULAR':
-                crossover_operator = GranularCrossover(non_elite_population.get_population(), crossover_probability)
+                for chromosome in non_elite_population.get_population():
+                    crossover_operator = GranularCrossover(chromosome,
+                                                crossover_probability)
 
             mutation_method = self.mutation_method_combo.get()
             mutation_operator = None

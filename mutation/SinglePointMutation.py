@@ -7,5 +7,6 @@ class SinglePointMutation(Mutation):
     def mutate(self):
         for individual in self.population:
             if random.random() < self.probability:
-                mutation_point = random.randint(0, len(individual.bits) - 1)
-                individual.bits[mutation_point] = 1 - individual.bits[mutation_point]
+                for i in individual:
+                    mutation_point = random.randint(0, len(i.bits) - 1)
+                    i.bits[mutation_point] = 1 - i.bits[mutation_point]

@@ -3,10 +3,10 @@ import random
 from selection.Selection import Selection
 
 class RouletteWheelSelection(Selection):
-
+    
     def select(self):
         
-        fitness = [self.function.compute(individual) for individual in self.population.get_population_value()]
+        fitness = [self.function.compute(individual) for individual in self.population.get_population()]
         min_fitness = min(fitness)
         adjusted_population = [individual - min_fitness for individual in fitness]
         
