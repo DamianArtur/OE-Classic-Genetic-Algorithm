@@ -127,7 +127,10 @@ class Application(tk.Frame):
         stds = []
         for _ in range(epochs):
             non_elite_population = Population(population_size - elite_strategy_amount, a, b, precision)
-
+            elite_strategy = EliteSelection(population, elite_strategy_amount, function)
+            elites = elite_strategy.select_elites()
+            population.population[:elite_strategy_amount] = elites
+            population.population[elite_strategy_amount:] = non_elite_population.population
             selection_method = self.selection_method_combo.get()
             if selection_method == 'BEST':
                 selection_strategy = BestSelection(population, function)
@@ -167,13 +170,10 @@ class Application(tk.Frame):
             # print("Po inwersji:")
             # for i in range (0,4):
             #     print(population.population[i].bits)
-            elite_strategy = EliteSelection(population, elite_strategy_amount,function)
-            elites = elite_strategy.select_elites()
-            population.population[:elite_strategy_amount] = elites
-            population.population[elite_strategy_amount:] = non_elite_population.population
+
 
             values = [function.compute(individual) for individual in population.get_population_value()]
-            print(values)
+            print(np.min(values))
             current_best_y = np.min(values)
 
             if current_best_y < best_individual_y:
