@@ -23,8 +23,14 @@ class Application(tk.Frame):
         self.pack(padx=10, pady=10)
         self.create_widgets()
     def create_widgets(self):
-        # self.function_combo = ttk.Combobox(self, width=30)
-        # self.function_combo.pack(pady=5)
+
+        self.function_label = tk.Label(self, text="Choose funcion")
+        self.function_label.pack()
+        
+        self.function_combo = ttk.Combobox(self, width=30)
+        self.function_combo['values'] =['Styblinski and Tang', 'Rosenbrock’s Function']
+        self.function_combo.pack(pady=5)
+
         self.input_fields = ["begin of the range", "end of the range", "population amount", "number of bits", "epochs amount",
                              "best and tournament chromosome amount", "elite strategy amount",
                              "cross probability", "mutation probability", "inversion probability"]
