@@ -6,6 +6,14 @@ from matplotlib import pyplot as plt
 import tkinter as tk
 from tkinter import ttk
 
+from crossover.ArithmeticalCrossover import ArithmeticalCrossover
+from crossover.AverageCrossover import AverageCrossover
+from crossover.BLXAlphaBetaCrossover import BLXAlphaBetaCrossover
+from crossover.BlendCrossover import BlendCrossover
+from crossover.FlatCrossover import FlatCrossover
+from crossover.LinearCrossover import LinearCrossover
+from mutation import UniformMutation
+from mutation.GaussianMutation import GaussianMutation
 from selection.BestSelection import BestSelection
 from mutation.EdgeMutation import EdgeMutation
 from crossover.GranularCrossover import GranularCrossover
@@ -68,7 +76,7 @@ class Application(tk.Frame):
 
 
         self.crossover_method_combo = ttk.Combobox(self, width=30)
-        self.crossover_method_combo['values'] = ['ONE_POINT', 'TWO_POINT', 'UNIFORM', 'THREE_POINT', 'GRANULAR']
+        self.crossover_method_combo['values'] = ['ONE_POINT', 'TWO_POINT', 'UNIFORM', 'THREE_POINT', 'GRANULAR', 'ARITHMETICAL', 'AVERAGE', 'BLEND', 'BLX_ALPHA_BETA', 'FLAT', 'LINEAR']
         self.crossover_method_combo.set('ONE_POINT')
         self.crossover_method_combo.pack(pady=5)
 
@@ -76,7 +84,7 @@ class Application(tk.Frame):
         self.mutation_method_label.pack()
 
         self.mutation_method_combo = ttk.Combobox(self, width=30)
-        self.mutation_method_combo['values'] = ['EDGE_MUTATION', 'TWO_POINT_MUTATION', 'SINGLE_POINT_MUTATION']
+        self.mutation_method_combo['values'] = ['EDGE_MUTATION', 'TWO_POINT_MUTATION', 'SINGLE_POINT_MUTATION', 'UNIFORM_MUTATION', 'GAUSSIAN_MUTATION']
         self.mutation_method_combo.set('EDGE_MUTATION')
         self.mutation_method_combo.pack(pady=5)
 
@@ -140,6 +148,18 @@ class Application(tk.Frame):
             crossover_operator = ThreePointCrossover(population.get_population(), crossover_probability)
         elif crossover_method == 'GRANULAR':
             crossover_operator = GranularCrossover(population.get_population(), crossover_probability)
+        elif crossover_method == 'ARITHMETICAL':
+            crossover_operator = ArithmeticalCrossover(population.get_population(), crossover_probability)
+        elif crossover_method == 'AVERAGE':
+            crossover_operator = AverageCrossover(population.get_population(), crossover_probability)
+        elif crossover_method == 'BLEND':
+            crossover_operator = BlendCrossover(population.get_population(), crossover_probability)
+        elif crossover_method == 'BLX_ALPHA_BETA':
+            crossover_operator = BLXAlphaBetaCrossover(population.get_population(), crossover_probability)
+        elif crossover_method == 'FLAT':
+            crossover_operator = FlatCrossover(population.get_population(), crossover_probability)
+        elif crossover_method == 'LINEAR':
+            crossover_operator = LinearCrossover(population.get_population(), crossover_probability)
 
         mutation_method = self.mutation_method_combo.get()
         mutation_operator = None
@@ -149,6 +169,10 @@ class Application(tk.Frame):
             mutation_operator = TwoPointMutation(population.get_population(), mutation_probability)
         elif mutation_method == 'SINGLE_POINT_MUTATION':
             mutation_operator = SinglePointMutation(population.get_population(), mutation_probability)
+        elif mutation_method == 'UNIFORM_MUTATION':
+            mutation_operator = UniformMutation(population.get_population(), mutation_probability)
+        elif mutation_method == 'GAUSSIAN_MUTATION':
+            mutation_operator = GaussianMutation(population.get_population(), mutation_probability)
 
         inversion_operator = InversionOperator(inversion_probability)
         # print("Do inwersji:")

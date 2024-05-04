@@ -1,4 +1,6 @@
 from utils.BinaryChromosome import BinaryChromosome
+from utils.RealChromosome import RealChromosome
+
 
 class Population:
     def __init__(self, population_size, a, b, precision):
@@ -7,6 +9,7 @@ class Population:
         self.b = b
         self.precision = precision
         self.population = [BinaryChromosome(a, b, precision) for _ in range(population_size)]
+        # self.population = [RealChromosome(a, b, precision) for _ in range(population_size)]
 
     def get_population(self):
         return self.population
