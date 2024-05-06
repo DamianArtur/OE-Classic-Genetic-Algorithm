@@ -4,21 +4,24 @@ from selection.Selection import Selection
 
 class TournamentSelection(Selection):
 
-    def __init__(self, population, tournament_size):
-        super().__init__(population)
+    def __init__(self, population, function, tournament_size):
+        super().__init__(population, function)
         self.tournament_size = tournament_size
 
     def select(self):
         selected_individuals = []
 
-        for _ in range(len(self.population.get_population_x())):
-            tournament = random.sample(self.population.get_population_values(), self.tournament_size)
+        pop = self.population.get_population()
+        values = self.population.get_population_value()
+
+        for _ in range(len(pop)):
+            tournament = random.sample(values, self.tournament_size)
             
             if self.minimization:
-                best_individual = min(tournament)
+                best_individual = values.index(min(tournament))
             else:
-                best_individual = max(tournament)
+                best_individual = values.index(max(tournament))
                 
-            selected_individuals.append(best_individual)
+            selected_individuals.append(pop[best_individual])
 
         return selected_individuals

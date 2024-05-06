@@ -5,7 +5,7 @@ from crossover.Crossover import Crossover
 class GranularCrossover(Crossover):
 
     def crossover(self):
-        for i in range(0, len(self.population), 2):
+        for i in range(0, len(self.population) - 1, 2):
             if random.random() < self.probability:
                 for j in range(self.population[i].total_length):
                     if random.random() < 0.5:

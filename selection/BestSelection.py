@@ -4,9 +4,8 @@ class BestSelection(Selection):
 
     def select(self, percentage=0.1):
         population = self.population.get_population()
-        
-        function_values = [self.function.compute(value) for value in self.population.get_population_value()]
-        
+
+        function_values = [self.function.compute(individual) for individual in self.population.get_population_value()]
         population_with_function_values = list(zip(population, function_values))
         
         if self.minimization:

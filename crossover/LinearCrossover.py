@@ -1,12 +1,28 @@
-class LinearCrossover:
-    def crossover(self, parent_1, parent_2):
-        assert len(parent_1) == len(parent_2) == 2
+from crossover.Crossover import Crossover
 
-        z = [(1/2)*(parent_1[i] + parent_2[i]) for i in range(2)]
-        v = [(3/2)*parent_1[i] - (1/2)*parent_2[i] for i in range(2)]
-        w = [-(1/2)*parent_1[i] + (3/2)*parent_2[i] for i in range(2)]
+class LinearCrossover(Crossover):
+    def crossover(self):
+        population_size = len(self.population)
+        for i in range(0, population_size - 1, 2):
+            num_variables = len(self.population[0])
+            offspring_1 = []
+            offspring_2 = []
 
-        candidates = [z, v, w]
-        candidates.sort(key=lambda x: sum(x))
-        child_1, child_2 = candidates[0], candidates[1]
-        return child_1, child_2
+            for j in range(num_variables):
+                parent_1_value = self.population[i][j].get_real_value()
+                parent_2_value = self.population[i + 1][j].get_real_value()
+
+                z = (1 / 2) * (parent_1_value + parent_2_value)
+                v = (3 / 2) * parent_1_value - (1 / 2) * parent_2_value
+                w = -(1 / 2) * parent_1_value + (3 / 2) * parent_2_value
+
+                candidates = [z, v, w]
+                candidates.sort()
+                offspring_1_value, offspring_2_value = candidates[0], candidates[1]
+
+                offspring_1.append(offspring_1_value)
+                offspring_2.append(offspring_2_value)
+
+            for j in range(num_variables):
+                self.population[i][j].value = offspring_1[j]
+                self.population[i + 1][j].value = offspring_2[j]

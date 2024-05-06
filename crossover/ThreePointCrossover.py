@@ -5,7 +5,7 @@ from crossover.Crossover import Crossover
 class ThreePointCrossover(Crossover):
 
     def crossover(self):
-        for i in range(0, len(self.population), 2):
+        for i in range(0, len(self.population) - 1, 2):
             if random.random() < self.probability:
 
                 crossover_point1 = random.randint(1, self.population[i].total_length - 3)

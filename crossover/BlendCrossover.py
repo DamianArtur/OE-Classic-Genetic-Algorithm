@@ -1,34 +1,35 @@
 import random
+from crossover.Crossover import Crossover
 
-class BlendCrossover:
-    def crossover(self, parent_1, parent_2, alpha):
-        assert len(parent_1) == len(parent_2) == 2
-        d1 = abs(parent_1[0] - parent_2[0])
-        d2 = abs(parent_1[1] - parent_2[1])
+class BlendCrossover(Crossover):
+    def crossover(self):
+        population_size = len(self.population)
+        for i in range(0, population_size - 1, 2):
+            num_variables = len(self.population[0])
+            offspring_1 = []
+            offspring_2 = []
 
-        print("d1:", d1)
-        print("d2:", d2)
+            for j in range(num_variables):
+                parent_1_value = self.population[i][j].get_real_value()
+                parent_2_value = self.population[i + 1][j].get_real_value()
 
-        child_1 = []
-        child_2 = []
+                d = abs(parent_1_value - parent_2_value)
+                min_val = min(parent_1_value, parent_2_value)
+                max_val = max(parent_1_value, parent_2_value)
 
-        min_val_x = min(parent_1[0], parent_2[0])
-        max_val_x = max(parent_1[0], parent_2[0])
-        min_val_y = min(parent_1[1], parent_2[1])
-        max_val_y = max(parent_1[1], parent_2[1])
+                alpha = random.uniform(0,1)
 
-        for i in range(2):
+                min_range_offspring_1 = min_val - alpha * d
+                max_range_offspring_1 = max_val + alpha * d
+                offspring_1_value = random.uniform(min_range_offspring_1, max_range_offspring_1)
 
-            min_range_child_1 = min_val_x - alpha * d1
-            max_range_child_1 = max_val_x + alpha * d1
-            print("[", min_range_child_1, ",", max_range_child_1, "]")
-            child_1_gene = random.uniform(min_range_child_1, max_range_child_1)
-            child_1.append(child_1_gene)
+                min_range_offspring_2 = min_val - alpha * d
+                max_range_offspring_2 = max_val + alpha * d
+                offspring_2_value = random.uniform(min_range_offspring_2, max_range_offspring_2)
 
-            min_range_child_2 = min_val_y - alpha * d2
-            max_range_child_2 = max_val_y + alpha * d2
-            print("[", min_range_child_2, ",", max_range_child_2, "]")
-            child_2_gene = random.uniform(min_range_child_2, max_range_child_2)
-            child_2.append(child_2_gene)
+                offspring_1.append(offspring_1_value)
+                offspring_2.append(offspring_2_value)
 
-        return child_1, child_2
+            for j in range(num_variables):
+                self.population[i][j].value = offspring_1[j]
+                self.population[i + 1][j].value = offspring_2[j]
