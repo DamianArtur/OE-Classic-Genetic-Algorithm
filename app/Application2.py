@@ -13,6 +13,7 @@ from crossover.BlendCrossover import BlendCrossover
 from crossover.FlatCrossover import FlatCrossover
 from crossover.LinearCrossover import LinearCrossover
 from crossover.MultipleCrossover import MultipleCrossover
+from crossover.PositionCrossover import PositionCrossover
 from mutation.UniformMutation import UniformMutation
 from mutation.GaussianMutation import GaussianMutation
 from selection.BestSelection import BestSelection
@@ -67,7 +68,7 @@ class Application2(tk.Frame):
 
 
         self.crossover_method_combo = ttk.Combobox(self, width=30)
-        self.crossover_method_combo['values'] = ['ARITHMETICAL', 'AVERAGE', 'BLEND', 'BLX_ALPHA_BETA', 'FLAT', 'LINEAR', 'MULTIPLE']
+        self.crossover_method_combo['values'] = ['ARITHMETICAL', 'AVERAGE', 'BLEND', 'BLX_ALPHA_BETA', 'FLAT', 'LINEAR', 'MULTIPLE', 'POSITION']
         self.crossover_method_combo.set('ARITHMETICAL')
         self.crossover_method_combo.pack(pady=5)
 
@@ -141,6 +142,8 @@ class Application2(tk.Frame):
             crossover_operator = LinearCrossover(population.get_population(), crossover_probability)
         elif crossover_method == 'MULTIPLE':
             crossover_operator = MultipleCrossover(population.get_population(), crossover_probability)
+        elif crossover_method == 'POSITION':
+            crossover_operator = PositionCrossover(population.get_population(), crossover_probability)
 
         mutation_method = self.mutation_method_combo.get()
         mutation_operator = None
