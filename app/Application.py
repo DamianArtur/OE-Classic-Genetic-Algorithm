@@ -84,15 +84,13 @@ class Application(tk.Frame):
 
         # self.max_min_combo = ttk.Combobox(self, width=30)
         # self.max_min_combo.pack(pady=5)
+
         self.maximization_var = tk.BooleanVar()
         self.max_min_checkbutton = tk.Checkbutton(self, text="Maximization", variable=self.maximization_var)
         self.max_min_checkbutton.pack(pady=5)
-
         self.execute_button = tk.Button(self, text="Execute",
                                         command=self.execute)
         self.execute_button.pack(pady=5)
-
-
 
     def execute(self):
         function = self.function_combo.get()

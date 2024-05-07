@@ -16,7 +16,6 @@ class Population:
         self.a = a
         self.b = b
         self.population = [[RealChromosome(a, b) for _ in range(num_variables)] for _ in range(population_size)]
-        print((self.population))
 
     def get_population(self):
         return self.population
